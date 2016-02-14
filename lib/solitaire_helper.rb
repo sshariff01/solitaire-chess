@@ -1,9 +1,9 @@
 require 'optparse'
-require_relative '../lib/piece'
-require_relative '../lib/bishop'
-require_relative '../lib/pawn'
-require_relative '../lib/rook'
-require_relative '../lib/horse'
+require_relative 'piece'
+require_relative 'bishop'
+require_relative 'pawn'
+require_relative 'rook'
+require_relative 'horse'
 
 class SolitaireHelper
   def initialize
@@ -22,9 +22,10 @@ class SolitaireHelper
   end
 
   def exit_if_solved(pieces)
-    if pieces.length == 1
+    if pieces.length <= 1 and !@success_log.empty?
       puts 'SOLUTION:'
-      @success_log.empty? ? (puts 'There is no solution') : @success_log.each { |step| puts "#{step}" } and exit
+      @success_log.each { |step| puts "#{step}" }
+      exit
     end
   end
 
@@ -45,6 +46,11 @@ class SolitaireHelper
       solve(pieces_dup)
     end
     @success_log.pop
+  end
+
+  def solve_solitaire
+    solve
+    puts 'There is no solution'
   end
 
   def populate_horses

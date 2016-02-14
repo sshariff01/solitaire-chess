@@ -4,4 +4,4 @@ worker = SolitaireHelper.new
 
 worker.process_input
 
-worker.solve
+worker.solve_solitaire
