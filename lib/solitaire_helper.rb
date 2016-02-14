@@ -91,12 +91,15 @@ class SolitaireHelper
     @options[:pawns] = []
     @options[:rooks] = []
     OptionParser.new do |opt|
+      opt.banner = "Usage: solitaire_solver.rb -d <BOARD_DIMENSION_SIZE> [options]"
       opt.on('-d', '--board-dimension BOARD_SIZE', 'Chess board length or width') { |o| @options[:board_size] = o.to_i }
       opt.on('-hrs', '--horse HORSE', '[x, y] of horse piece') { |o| @options[:horses] << o[1,o.length-2].split(',').map { |elem| elem.to_i } }
       opt.on('-bp', '--bishop BISHOP', '[x, y] of bishop piece') { |o| @options[:bishops] << o[1,o.length-2].split(',').map { |elem| elem.to_i } }
       opt.on('-pn', '--pawn PAWN', '[x, y] of pawn piece') { |o| @options[:pawns] << o[1,o.length-2].split(',').map { |elem| elem.to_i } }
       opt.on('-rk', '--rook ROOK', '[x, y] of rook piece') { |o| @options[:rooks] << o[1,o.length-2].split(',').map { |elem| elem.to_i } }
     end.parse!
+
+    raise ('Missing Argument: -d arg specifying dimension size of chess board. See --help for usage.') if not @options[:board_size]
 
     populate_chess_board
   end
