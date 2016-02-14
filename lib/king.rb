@@ -10,10 +10,15 @@ class King < Piece
 
   def generate_possible_moves
     [
+        [x+1, y+1],
+        [x-1, y+1],
+        [x+1, y-1],
+        [x-1, y-1],
+
         [x+1, y],
         [x-1, y],
         [x, y+1],
-        [x, y-1],
+        [x, y-1]
     ].delete_if { |a, b| a < 0 or b < 0 or a > @board_dimension-1 or b > @board_dimension-1 }
   end
 end

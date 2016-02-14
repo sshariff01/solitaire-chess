@@ -4,6 +4,8 @@ require_relative 'bishop'
 require_relative 'pawn'
 require_relative 'rook'
 require_relative 'horse'
+require_relative 'king'
+require_relative 'queen'
 
 class SolitaireHelper
   def initialize
@@ -77,11 +79,25 @@ class SolitaireHelper
     end
   end
 
+  def populate_kings
+    @options[:kings].each do |h|
+      @pieces << King.new(h[0], h[1], @options[:board_size])
+    end
+  end
+
+  def populate_queens
+    @options[:queens].each do |h|
+      @pieces << Queen.new(h[0], h[1], @options[:board_size])
+    end
+  end
+
   def populate_chess_board
     populate_horses
     populate_bishops
     populate_rooks
     populate_pawns
+    populate_kings
+    populate_queens
   end
 
   def process_input
@@ -90,13 +106,17 @@ class SolitaireHelper
     @options[:bishops] = []
     @options[:pawns] = []
     @options[:rooks] = []
+    @options[:kings] = []
+    @options[:queens] = []
     OptionParser.new do |opt|
       opt.banner = "Usage: solitaire_solver.rb -d <BOARD_DIMENSION_SIZE> [options]"
       opt.on('-d', '--board-dimension BOARD_SIZE', 'Chess board length or width') { |o| @options[:board_size] = o.to_i }
-      opt.on('-hrs', '--horse HORSE', '[x, y] of horse piece') { |o| @options[:horses] << o[1,o.length-2].split(',').map { |elem| elem.to_i } }
-      opt.on('-bp', '--bishop BISHOP', '[x, y] of bishop piece') { |o| @options[:bishops] << o[1,o.length-2].split(',').map { |elem| elem.to_i } }
-      opt.on('-pn', '--pawn PAWN', '[x, y] of pawn piece') { |o| @options[:pawns] << o[1,o.length-2].split(',').map { |elem| elem.to_i } }
-      opt.on('-rk', '--rook ROOK', '[x, y] of rook piece') { |o| @options[:rooks] << o[1,o.length-2].split(',').map { |elem| elem.to_i } }
+      opt.on('-h', '--horse HORSE', '[x, y] of horse piece') { |o| @options[:horses] << o[1,o.length-2].split(',').map { |elem| elem.to_i } }
+      opt.on('-b', '--bishop BISHOP', '[x, y] of bishop piece') { |o| @options[:bishops] << o[1,o.length-2].split(',').map { |elem| elem.to_i } }
+      opt.on('-p', '--pawn PAWN', '[x, y] of pawn piece') { |o| @options[:pawns] << o[1,o.length-2].split(',').map { |elem| elem.to_i } }
+      opt.on('-r', '--rook ROOK', '[x, y] of rook piece') { |o| @options[:rooks] << o[1,o.length-2].split(',').map { |elem| elem.to_i } }
+      opt.on('-k', '--king KING', '[x, y] of king piece') { |o| @options[:kings] << o[1,o.length-2].split(',').map { |elem| elem.to_i } }
+      opt.on('-q', '--queen QUEEN', '[x, y] of queen piece') { |o| @options[:queens] << o[1,o.length-2].split(',').map { |elem| elem.to_i } }
     end.parse!
 
     raise ('Missing Argument: -d arg specifying dimension size of chess board. See --help for usage.') if not @options[:board_size]
