@@ -111,18 +111,6 @@ class SolitaireHelper
     board.remove_piece(dead_piece)
   end
 
-  def process_test_input
-    @board = Board.new(4)
-
-    add_piece(@board, @pieces, Horse.new(2, 0, @board.size))
-    add_piece(@board, @pieces, Bishop.new(1, 3, @board.size))
-    add_piece(@board, @pieces, Rook.new(2, 2, @board.size))
-    add_piece(@board, @pieces, Rook.new(3, 3, @board.size))
-    add_piece(@board, @pieces, Pawn.new(0, 0, @board.size))
-    add_piece(@board, @pieces, Pawn.new(1, 1, @board.size))
-
-  end
-
   def process_input
     @options = {}
     @options[:horses] = []
