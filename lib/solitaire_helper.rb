@@ -1,4 +1,5 @@
 require 'optparse'
+require_relative 'board'
 require_relative 'piece'
 require_relative 'bishop'
 require_relative 'pawn'
@@ -31,7 +32,7 @@ class SolitaireHelper
     end
   end
 
-  def solve(pieces=@pieces)
+  def solve(board=@board, pieces=@pieces)
     exit_if_solved(pieces)
 
     possible_kills = potential_moves(pieces)
@@ -40,12 +41,13 @@ class SolitaireHelper
       victim = altercation[1]
       @success_log << "#{killer.class} at [#{killer.x}, #{killer.y}] takes #{victim.class} at [#{victim.x}, #{victim.y}]"
 
-      pieces_dup, killer_dup = pieces.dup, killer.dup
+      board_dup, pieces_dup, killer_dup = board.dup, pieces.dup, killer.dup
       killer_dup.kill(victim)
       pieces_dup[pieces_dup.index(killer)] = killer_dup
-      pieces_dup.delete(victim)
+      # pieces_dup.delete(victim)
+      remove_piece(board_dup, pieces_dup, victim)
 
-      solve(pieces_dup)
+      solve(board_dup, pieces_dup)
     end
     @success_log.pop
   end
@@ -57,37 +59,37 @@ class SolitaireHelper
 
   def populate_horses
     @options[:horses].each do |h|
-      @pieces << Horse.new(h[0], h[1], @options[:board_size])
+      add_piece(@board, @pieces, Horse.new(h[0], h[1], @board.size))
     end
   end
 
   def populate_bishops
     @options[:bishops].each do |h|
-      @pieces << Bishop.new(h[0], h[1], @options[:board_size])
+      add_piece(@board, @pieces, Bishop.new(h[0], h[1], @board.size))
     end
   end
 
   def populate_rooks
     @options[:rooks].each do |h|
-      @pieces << Rook.new(h[0], h[1], @options[:board_size])
+      add_piece(@board, @pieces, Rook.new(h[0], h[1], @board.size))
     end
   end
 
   def populate_pawns
     @options[:pawns].each do |h|
-      @pieces << Pawn.new(h[0], h[1], @options[:board_size])
+      add_piece(@board, @pieces, Pawn.new(h[0], h[1], @board.size))
     end
   end
 
   def populate_kings
     @options[:kings].each do |h|
-      @pieces << King.new(h[0], h[1], @options[:board_size])
+      add_piece(@board, @pieces, King.new(h[0], h[1], @board.size))
     end
   end
 
   def populate_queens
     @options[:queens].each do |h|
-      @pieces << Queen.new(h[0], h[1], @options[:board_size])
+      add_piece(@board, @pieces, Queen.new(h[0], h[1], @board.size))
     end
   end
 
@@ -98,6 +100,27 @@ class SolitaireHelper
     populate_pawns
     populate_kings
     populate_queens
+  end
+
+  def add_piece(board, pieces, new_piece)
+    pieces << new_piece
+    board.add_piece(new_piece)
+  end
+
+  def remove_piece(board, pieces, dead_piece)
+    pieces.delete(dead_piece)
+    board.remove_piece(dead_piece)
+  end
+
+  def process_test_input
+    @board = Board.new(4)
+
+    add_piece(@board, @pieces, Pawn.new(0, 0, @board.size))
+    add_piece(@board, @pieces, Pawn.new(1, 1, @board.size))
+    add_piece(@board, @pieces, Bishop.new(1, 3, @board.size))
+    add_piece(@board, @pieces, Horse.new(2, 0, @board.size))
+    add_piece(@board, @pieces, Rook.new(2, 2, @board.size))
+    add_piece(@board, @pieces, Rook.new(3, 3, @board.size))
   end
 
   def process_input
@@ -121,6 +144,8 @@ class SolitaireHelper
 
     raise ('Missing Argument: -d arg specifying dimension size of chess board. See --help for usage.') if not @options[:board_size]
 
+    @board = Board.new(options[:board_size])
     populate_chess_board
   end
 end
+
