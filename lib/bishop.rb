@@ -6,6 +6,8 @@ class Bishop < Piece
     @possible_moves = generate_possible_moves
   end
 
+  private
+
   def generate_possible_moves
     possible_moves = []
     (1..@board_dimension).each do |i|
@@ -32,24 +34,5 @@ class Bishop < Piece
       end
     end
     possible_interceptions
-  end
-
-  def something_in_the_way?(board, kill_piece)
-    if possible_moves_in_the_way(board, kill_piece).empty?
-      false
-    else
-      true
-    end
-  end
-
-  def can_kill?(board, kill_piece)
-    if @possible_moves.include? [kill_piece.x, kill_piece.y]
-      if something_in_the_way?(board, kill_piece)
-        return false
-      else
-        return true
-      end
-    end
-    false
   end
 end
