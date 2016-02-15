@@ -15,4 +15,8 @@ class Board
   def remove_piece(dead_piece)
     @board[dead_piece.x][dead_piece.y] = nil
   end
+
+  def spot_empty?(x, y)
+    @board[x][y]
+  end
 end

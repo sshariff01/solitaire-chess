@@ -17,30 +17,34 @@ class Bishop < Piece
     possible_moves.delete_if { |a, b| a < 0 or b < 0 or a > @board_dimension-1 or b > @board_dimension-1 }
   end
 
-  def possible_moves_in_the_way(kill_piece)
-    @possible_interceptions = []
-    dim = [(@x - kill_piece.x).abs, (@y - kill_piece.y).abs].max {|a,b| a <=> b }
+  def possible_moves_in_the_way(board, kill_piece)
+    possible_interceptions = []
+    dim = [(@x - kill_piece.x).abs, (@y - kill_piece.y).abs].max {|a,b| a <=> b } - 1
     (1..dim).each do |i|
       if @x < kill_piece.x and @y < kill_piece.y
-        @possible_interceptions << [@x+i, @y+i]
+        possible_interceptions << [@x+i, @y+i] if board.spot_empty?(@x+i, @y+i)
       elsif @x < kill_piece.x and @y > kill_piece.y
-        @possible_interceptions << [@x+i, @y-i]
+        possible_interceptions << [@x+i, @y-i] if board.spot_empty?(@x+i, @y-i)
       elsif @x > kill_piece.x and @y < kill_piece.y
-        @possible_interceptions << [@x-i, @y+i]
+        possible_interceptions << [@x-i, @y+i] if board.spot_empty?(@x-i, @y+i)
       elsif @x > kill_piece.x and @y > kill_piece.y
-        @possible_interceptions << [@x-i, @y-i]
+        possible_interceptions << [@x-i, @y-i] if board.spot_empty?(@x-i, @y-i)
       end
     end
-    @possible_interceptions
+    possible_interceptions
   end
 
-  def something_in_the_way?(kill_piece)
-    (possible_moves_in_the_way(kill_piece).include? [kill_piece.x, kill_piece.y]) ? false : true
+  def something_in_the_way?(board, kill_piece)
+    if possible_moves_in_the_way(board, kill_piece).empty?
+      false
+    else
+      true
+    end
   end
 
-  def can_kill?(kill_piece)
+  def can_kill?(board, kill_piece)
     if @possible_moves.include? [kill_piece.x, kill_piece.y]
-      if something_in_the_way?(kill_piece)
+      if something_in_the_way?(board, kill_piece)
         return false
       else
         return true

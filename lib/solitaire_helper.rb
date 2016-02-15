@@ -14,11 +14,11 @@ class SolitaireHelper
     @pieces = []
   end
 
-  def potential_moves(pieces)
+  def potential_moves(board, pieces)
     kill_list = []
     pieces.each do |killer|
       pieces.each do |target|
-        kill_list << [killer, target] if killer.can_kill? target
+        kill_list << [killer, target] if killer.can_kill?(board, target)
       end
     end
     kill_list
@@ -35,7 +35,7 @@ class SolitaireHelper
   def solve(board=@board, pieces=@pieces)
     exit_if_solved(pieces)
 
-    possible_kills = potential_moves(pieces)
+    possible_kills = potential_moves(board, pieces)
     possible_kills.each do |altercation|
       killer = altercation[0]
       victim = altercation[1]
@@ -44,7 +44,6 @@ class SolitaireHelper
       board_dup, pieces_dup, killer_dup = board.dup, pieces.dup, killer.dup
       killer_dup.kill(victim)
       pieces_dup[pieces_dup.index(killer)] = killer_dup
-      # pieces_dup.delete(victim)
       remove_piece(board_dup, pieces_dup, victim)
 
       solve(board_dup, pieces_dup)
@@ -115,12 +114,13 @@ class SolitaireHelper
   def process_test_input
     @board = Board.new(4)
 
-    add_piece(@board, @pieces, Pawn.new(0, 0, @board.size))
-    add_piece(@board, @pieces, Pawn.new(1, 1, @board.size))
-    add_piece(@board, @pieces, Bishop.new(1, 3, @board.size))
     add_piece(@board, @pieces, Horse.new(2, 0, @board.size))
+    add_piece(@board, @pieces, Bishop.new(1, 3, @board.size))
     add_piece(@board, @pieces, Rook.new(2, 2, @board.size))
     add_piece(@board, @pieces, Rook.new(3, 3, @board.size))
+    add_piece(@board, @pieces, Pawn.new(0, 0, @board.size))
+    add_piece(@board, @pieces, Pawn.new(1, 1, @board.size))
+
   end
 
   def process_input
@@ -144,7 +144,7 @@ class SolitaireHelper
 
     raise ('Missing Argument: -d arg specifying dimension size of chess board. See --help for usage.') if not @options[:board_size]
 
-    @board = Board.new(options[:board_size])
+    @board = Board.new(@options[:board_size])
     populate_chess_board
   end
 end

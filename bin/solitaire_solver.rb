@@ -3,6 +3,6 @@ require_relative '../lib/solitaire_helper'
 
 worker = SolitaireHelper.new
 
-worker.process_test_input
+worker.process_input
 
 worker.solve_solitaire

@@ -7,7 +7,7 @@ class Piece
     @y
   end
 
-  def can_kill?(kill_piece)
+  def can_kill?(board, kill_piece)
     @possible_moves.include? [kill_piece.x, kill_piece.y]
   end
 
